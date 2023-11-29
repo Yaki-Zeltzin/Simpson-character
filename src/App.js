@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+
+import { useState } from "react";
+import CharacterContainer from "./components/CharacterContainer";
+import Container from "./components/Container";
+import Header from "./components/Header";
+import Welcome from "./components/Welcome";
 
 function App() {
+  const [character, setCharacter] = useState(null)
+
+  const reqApi = async() => {
+    const random = Math.floor(Math.random()*41)
+    const api = await fetch(
+      `https://apisimpsons.fly.dev/api/personajes?page=${random}`
+    )
+    const frase = await api.json()
+    setCharacter(frase.docs)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Container>
+        <Header/>
+        {!character ? (
+          <Welcome  reqApi={reqApi}/>
+        ) : (
+          <CharacterContainer character={character} reqApi={reqApi}/>
+        )}
+      </Container>
   );
 }
 
